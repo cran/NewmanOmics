@@ -1,0 +1,125 @@
+
+R version 3.6.0 (2019-04-26) -- "Planting of a Tree"
+Copyright (C) 2019 The R Foundation for Statistical Computing
+Platform: x86_64-w64-mingw32/x64 (64-bit)
+
+R is free software and comes with ABSOLUTELY NO WARRANTY.
+You are welcome to redistribute it under certain conditions.
+Type 'license()' or 'licence()' for distribution details.
+
+R is a collaborative project with many contributors.
+Type 'contributors()' for more information and
+'citation()' on how to cite R or R packages in publications.
+
+Type 'demo()' for some demos, 'help()' for on-line help, or
+'help.start()' for an HTML browser interface to help.
+Type 'q()' to quit R.
+
+> library(NewmanOmics)
+> 
+> data(LungPair)
+> lung <- as.matrix(log2(1 + LungPair))
+> summary(lung)
+ TCGA.38.4625.11A.01R.1758.07 TCGA.38.4625.01A.01R.1758.07
+ Min.   : 0.000               Min.   : 0.000              
+ 1st Qu.: 2.711               1st Qu.: 3.032              
+ Median : 7.480               Median : 7.728              
+ Mean   : 6.394               Mean   : 6.591              
+ 3rd Qu.: 9.597               3rd Qu.: 9.734              
+ Max.   :18.980               Max.   :19.680              
+> 
+> set.seed(12345)
+> normal <- lung[, 1, drop=FALSE]
+> tumor  <- lung[, 2, drop=FALSE]
+> 
+> tic <- proc.time()
+> ps <- pairedStat(normal, tumor)
+> toc <- proc.time()
+> all(toc - tic < 10, na.rm=TRUE) # takes less than 7s on my PC
+[1] TRUE
+> slotNames(ps) # should be five
+[1] "nu.statistics" "p.values"      "pairedMean"    "difference"   
+[5] "smoothSD"     
+> dim(ps@nu.statistics)
+[1] 20531     1
+> dim(ps@p.values)
+[1] 20531     1
+> 
+> summary(ps@nu.statistics)
+ TCGA.38.4625.01A.01R.1758.07
+ Min.   : 0.0000             
+ 1st Qu.: 0.3357             
+ Median : 1.0023             
+ Mean   : 1.2988             
+ 3rd Qu.: 1.9462             
+ Max.   :18.4447             
+> summary(ps@p.values)
+ TCGA.38.4625.01A.01R.1758.07
+ Min.   :0.0000              
+ 1st Qu.:0.2723              
+ Median :0.5709              
+ Mean   :0.5564              
+ 3rd Qu.:0.8499              
+ Max.   :1.0000              
+> 
+> head(ps@nu.statistics)
+            TCGA.38.4625.01A.01R.1758.07
+?|100130426                    0.0000000
+?|100133144                    0.3084685
+?|100134869                    0.7578389
+?|10357                        0.5257639
+?|10431                        1.6200054
+?|136542                       0.0000000
+> head(ps@p.values)
+     TCGA.38.4625.01A.01R.1758.07
+[1,]                     0.999999
+[2,]                     0.862121
+[3,]                     0.668867
+[4,]                     0.766898
+[5,]                     0.360506
+[6,]                     0.999999
+> 
+> ps2 <- pairedStat(list(lung))
+> summary(ps2@nu.statistics)
+ TCGA.38.4625.01A.01R.1758.07
+ Min.   : 0.0000             
+ 1st Qu.: 0.3357             
+ Median : 1.0023             
+ Mean   : 1.2988             
+ 3rd Qu.: 1.9462             
+ Max.   :18.4447             
+> summary(ps2@p.values)
+ TCGA.38.4625.01A.01R.1758.07
+ Min.   :0.0000              
+ 1st Qu.:0.2725              
+ Median :0.5706              
+ Mean   :0.5563              
+ 3rd Qu.:0.8493              
+ Max.   :1.0000              
+> 
+> summary(ps@nu.statistics - ps2@nu.statistics)
+ TCGA.38.4625.01A.01R.1758.07
+ Min.   :0                   
+ 1st Qu.:0                   
+ Median :0                   
+ Mean   :0                   
+ 3rd Qu.:0                   
+ Max.   :0                   
+> summary(pdiff <- ps@p.values - ps2@p.values)
+ TCGA.38.4625.01A.01R.1758.07
+ Min.   :-8.830e-04          
+ 1st Qu.:-2.000e-04          
+ Median : 2.200e-05          
+ Mean   : 9.801e-05          
+ 3rd Qu.: 4.080e-04          
+ Max.   : 9.590e-04          
+> 
+> plot(ps@nu.statistics, pdiff)
+> abline(h=0)
+> 
+> plot(ps)
+> hist(ps)
+> 
+> proc.time()
+   user  system elapsed 
+   9.01    0.06    9.07 
