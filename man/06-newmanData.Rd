@@ -31,7 +31,7 @@ data(GSE6631)
   pair were separated and saved as a binary R data file. The
   head-and-neck cancer data were downloaded from the Gene Expression
   Omnibus at 
-  \url{http://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE6631}. A
+  \url{https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE6631}. A
   subset of 2000 genes was randomly selected before saving the binary R
   data file.
 }

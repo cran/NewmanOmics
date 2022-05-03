@@ -1,6 +1,6 @@
 
-R version 3.6.0 (2019-04-26) -- "Planting of a Tree"
-Copyright (C) 2019 The R Foundation for Statistical Computing
+R version 4.2.0 (2022-04-22 ucrt) -- "Vigorous Calisthenics"
+Copyright (C) 2022 The R Foundation for Statistical Computing
 Platform: x86_64-w64-mingw32/x64 (64-bit)
 
 R is free software and comes with ABSOLUTELY NO WARRANTY.
@@ -41,13 +41,13 @@ In nlm(logLikelihood, mle, q = datavec, z = Z, stepmax = 10000,  :
 > ### reduce displayed digits to avoid differences in NLM
 > ### on different platforms
 > formatC(fm@mle, digits=3, format="e")
-[1] "1.000e+06" "1.083e+02"
+[1] "1.893e+05" "2.035e+01"
 > round(fm@psi, 5)
-[1] 0.11061 0.01761 0.87178
+[1] 0.11063 0.08479 0.80458
 > 
 > plot(fm)
 > 
 > 
 > proc.time()
    user  system elapsed 
-  29.90    0.45   30.34 
+   5.20    0.10    5.29 

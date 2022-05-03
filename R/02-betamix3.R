@@ -58,7 +58,8 @@ logLikelihood <- function(param, q, z) {
 }
 
 ## datavec is the vector of observed data, assumed to be between 0 and 1
-fitMix3 <- function(datavec, forever=100, epsilon=0.001, print.level=0) {
+fitMix3 <- function(datavec, forever=100,
+                    epsilon=0.001, relative = 0.001, print.level=0) {
   if (any(is.na(datavec))) {
     warning("Data contains missing values; we are ignoring them.")
     datavec <- datavec[!is.na(datavec)]
@@ -79,12 +80,15 @@ fitMix3 <- function(datavec, forever=100, epsilon=0.001, print.level=0) {
   ## loop control
   lastlike <- -10^5
   currlike <- 0
+  delta <- abs(currlike - lastlike)
+  reld <- 2*relative
   count <- 0
   mle <- c(2,2)
-  while ((count < forever) & (abs(lastlike - currlike) > epsilon)) {
+  while ((count < forever) & (delta > epsilon) & (reld > relative)) {
     count = count + 1
     ## M-step
-    maxlike <- nlm(logLikelihood, mle, q=datavec, z=Z, stepmax=10000, print.level=print.level)
+    maxlike <- nlm(logLikelihood, mle, q=datavec, z=Z, stepmax=10000,
+                   print.level=print.level)
     mle <- maxlike$estimate
     lastlike <- currlike
     currlike <- maxlike$minimum
@@ -96,11 +100,14 @@ fitMix3 <- function(datavec, forever=100, epsilon=0.001, print.level=0) {
     Z[,3] <- psi[3]
     Z <- sweep(Z, 1, apply(Z, 1, sum), "/")
     if (print.level > 0) {
-      print("MLE (L,M) =")
-      print(mle)
-      print("Psi (p1, p2, p3) =")
-      print(psi)
-      }
+      cat("currliike = ", currlike, " delta = ", delta, "\n")
+      cat("MLE (L,M) = ")
+      cat(mle, "\n")
+      cat("\nPsi (p1, p2, p3) = ")
+      cat(psi, "\n")
+    }
+    delta <- abs(lastlike - currlike)
+    reld <- abs(delta/currlike)
   }
   new("MixOf3Beta",
       input = datavec,

@@ -10,6 +10,8 @@ stand <- function(M, mu) {
 
 ### INTERNAL
 ### Get the background distribution of "unusual" values in the bank
+### KRC: why are we going to all the exta trouble of recomputing the loess
+###      by removing each individual sample. Does that even matter?
 nuValsIterBank <- function(matrix) {
   n <- nrow(matrix)
   s <- ncol(matrix)
@@ -32,7 +34,7 @@ createBank <- function(bankMatrix) {
   if (diff(range(bankMatrix)) > 100) {
     warning("createBank: Data appears to be on the raw scale and not on a log scale.")
   }
-  ## Compute mean and standard deviation
+  ## Compute row-wise mean and standard deviation
   bankMeans  <- roam(bankMatrix)
   bankSD <- stand(bankMatrix, bankMeans)
   ## Fit a loess model, since we assume SD is a smooth function of the mean
@@ -77,20 +79,26 @@ nuValsBank<- function(matrix, mean, sd){
   return(scaled)
 }
 
-pValuesBanked <- function(matrix, Background, n, s){
-
-
+## Looks stupid slow. Can we speed it up?
+pValuesBankedOrig <- function(matrix, Background, n, s){
   meanDist = mean(Background)
   sdDist = sd(Background)
 
   matP = matrix(NA,n,s)
-
   for (i in 1:n){
     for (j in 1:s){
       matP[i,j] <- pnorm(matrix[i,j],meanDist,sdDist)
     }
   }
   return(matP)
+}
+pValuesBankedSecond <- function(matrix, Background, n, s){
+  meanDist = mean(Background)
+  sdDist = sd(Background)
+  pnorm(matrix, meanDist, sdDist)
+}
+pValuesBanked <- function(matrix, Background, n, s){
+  pnorm(matrix, 0, 1)
 }
 
 ## If pvals_uncorr is your output, fdr gives you a matrix of corrected p values

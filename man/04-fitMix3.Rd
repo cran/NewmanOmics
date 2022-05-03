@@ -9,7 +9,7 @@
   rates.
 }
 \usage{
-fitMix3(datavec, forever=100, epsilon=0.001, print.level=0)
+fitMix3(datavec, forever=100, epsilon=0.001, relative = 0.001, print.level=0)
 computeFDR(object, alpha)
 computeCutoff(object, fdr)
 }
@@ -51,6 +51,8 @@ computeCutoff(object, fdr)
   the mixture model.}
 \item{epsilon}{A real number; change in the log likelihood that should
   be used to terminate the model-fitting loop.}
+\item{relative}{A real number; change in the relative log likelihood
+  that should be used to terminate the model-fitting loop.}
 \item{print.level}{An integer; how much detail should \code{\link{nlm}}
   print while fitting the model.}
 \item{object}{An object of the \code{\link{MixOf3Beta}} class.}
