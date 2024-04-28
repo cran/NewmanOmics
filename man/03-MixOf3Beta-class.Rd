@@ -31,8 +31,8 @@
 \section{Slots}{
   \describe{
     \item{\code{input}:}{A numeric vector containing the input p-values.}
-    \item{\code{mle}:}{ A numeric vactor of length 2 containing the bea
-      parameters \code{L} and {M} (in that order).}
+    \item{\code{mle}:}{ A numeric vactor of length 2 containing the beta
+      parameters \code{L} and \code{M} (in that order).}
     \item{\code{psi}:}{A numeric vector of length three containing the
       mixing parameters, in the order (right-peak component, left-peak
       component, and uniform-component).}
