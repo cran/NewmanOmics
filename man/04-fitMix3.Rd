@@ -35,7 +35,7 @@ computeCutoff(object, fdr)
   indicate which distribution each point is likely to arise
   form. \code{Z} has three columns (one for each mixture component) and
   one row for each p-value; the entries in each row are nonegative and
-  sum to one. The M-step of the algorithm uses the \code{\link{nlm}}
+  sum to one. The M-step of the algorithm uses the \code{\link[stats]{nlm}}
   optimization function to compute the maximum-likelihood \code{mle}
   values given \code{psi} and \code{Z}. The E-step first updates
   \code{psi} from the \code{Z}-matrix, and then updates the values of
@@ -53,7 +53,7 @@ computeCutoff(object, fdr)
   be used to terminate the model-fitting loop.}
 \item{relative}{A real number; change in the relative log likelihood
   that should be used to terminate the model-fitting loop.}
-\item{print.level}{An integer; how much detail should \code{\link{nlm}}
+\item{print.level}{An integer; how much detail should \code{\link[stats]{nlm}}
   print while fitting the model.}
 \item{object}{An object of the \code{\link{MixOf3Beta}} class.}
 \item{alpha}{A real number between 0 and 1; the cutoff on the nominal
