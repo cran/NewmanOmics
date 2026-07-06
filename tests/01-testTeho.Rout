@@ -1,0 +1,53 @@
+
+R version 4.6.0 (2026-04-24 ucrt) -- "Because it was There"
+Copyright (C) 2026 The R Foundation for Statistical Computing
+Platform: x86_64-w64-mingw32/x64
+
+R is free software and comes with ABSOLUTELY NO WARRANTY.
+You are welcome to redistribute it under certain conditions.
+Type 'license()' or 'licence()' for distribution details.
+
+R is a collaborative project with many contributors.
+Type 'contributors()' for more information and
+'citation()' on how to cite R or R packages in publications.
+
+Type 'demo()' for some demos, 'help()' for on-line help, or
+'help.start()' for an HTML browser interface to help.
+Type 'q()' to quit R.
+
+> library(NewmanOmics)
+> ## simulate a data set
+> set.seed(86420)
+> NR <- 5000
+> NC <- 20
+> N2 <- matrix(rnorm(NR*NC), nrow = NR, ncol = NC)
+> C2 <- matrix(rnorm(NR*NC), nrow = NR, ncol = NC)
+> ## Compute stats theoretically
+> T1 <- pairedStat(N2, C2, ptype = "theo", ntype = "one")
+> T2 <- pairedStat(N2 ,C2, ptype = "theo", ntype = "two")
+> # compute stats empirically
+> E1 <- pairedStat(N2, C2, ptype = "emp", ntype = "one")
+> E2 <- pairedStat(N2, C2, ptype = "emp", ntype = "two")
+> ## test agreement of nu.statistics
+> all(T1@nu.statistics > 0) # absolute value already computed
+[1] TRUE
+> all(T2@nu.statistics == E2@nu.statistics) # signed values agree across methods
+[1] TRUE
+> all(T1@nu.statistics == abs(T2@nu.statistics)) # theoretical agrees
+[1] TRUE
+> all(E1@nu.statistics == abs(E2@nu.statistics)) # empirical agrees
+[1] TRUE
+> ## test agreement of p-values
+> fold <- function(p) { 1 - abs(1 - 2*p) } # convert two-sided to one-sided
+> all(T1@p.values == fold(T2@p.values))
+[1] TRUE
+> range(E1@p.values - fold(E2@p.values)) # variability from simulations
+[1] -0.002312  0.002144
+> range(T1@p.values - E1@p.values)       # variability from simulations
+[1] -0.001044049  0.001144273
+> range(T2@p.values - E2@p.values)       # variability from simulations
+[1] -5.005755e-05  8.963516e-04
+> 
+> proc.time()
+   user  system elapsed 
+  10.34    0.10   10.43 

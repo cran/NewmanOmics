@@ -7,7 +7,9 @@ paired individual samples. Commonly used to find differential expression
 between tumor-normal pairs or before-after treatment pairs.
 }
 \usage{
-pairedStat(baseData, perturbedData = NULL, pairing = NULL)
+pairedStat(baseData, perturbedData = NULL, pairing = NULL,
+           ptype = c("empirical", "theoretical"),
+           ntype = c("one-sided", "two-sided"))
 }
 \arguments{
 \item{baseData}{Either a list or a matrix. May contain data for just the
@@ -21,9 +23,14 @@ pairedStat(baseData, perturbedData = NULL, pairing = NULL)
   and perturbed samples. Entries must be integers. Positive integers
   indicate perturbed samples and negative integers with the same
   absolute value indicate the paired base samples. See details.}
+\item{ptype}{Enumerated character string indicating which method to use
+  to compute p-values.}
+\item{ntype}{Enumerated character string indicating where to return
+  one-sided (all positive) or two-sided (signed) nu-statistics with
+  corresponding p-values.}
 }
 \value{
-A list containing two marices: the \code{nu.statistics} and the \code{p.values}.
+An object of the \code{\link{NewmanPaired}} class.
 }
 \details{
   In the simplest case, we have gene expression data on one "base"
@@ -65,7 +72,18 @@ A list containing two marices: the \code{nu.statistics} and the \code{p.values}.
   one-column matrix P). If we let \code{BP <- cbind(B, P) }, then we can
   choose (1) \code{pairedStats(B, P)}, or (2)
   \code{pairedStats(list(BP))}, or (3)  \code{pairedStats(BP,
-  pairing = c(-1,1))}. 
+    pairing = c(-1,1))}.
+
+  The final two option, \code{ptype} and \code{ntype}, have been added
+  for backwards comatibility. The default values match the performance
+  of the original versions of the package, which returned the absolute
+  values of the nu-statistics and computed empirical p-values using null
+  simulations. Over time, we came to realize that the signed
+  nu-statistics were simetimes useful. We also belatedly relaized that
+  we could compute theoretical p-values from a particular normal
+  distribution, N(0, sqrt(pi)), which arises becaue the smoothing step
+  is equivalent in the null case to a transformation built from the
+  half-normal distribution.
 }
 \examples{
 data(GSE6631)
@@ -73,9 +91,14 @@ Normal <- GSE6631[, c(1,3)]
 Tumor <- GSE6631[, c(2,4)]
 
 ### input two separate matrices
-ps1 <- pairedStat(Normal, Tumor)
-summary(ps1@nu.statistics)
-summary(ps1@p.values)
+ps0 <- pairedStat(Normal, Tumor)
+summary(ps0@nu.statistics)
+summary(ps0@p.values)
+
+### use the theoreticl p-values
+ps1 <- pairedStat(Normal, Tumor, ntype = "two-sided")
+folded <- 1 - abs(1 - 2*ps1@p.values)
+summary(as.vector(folded - (ps0@p.values)))
 
 ### input one combined matrix and a pairing vector
 ps2 <- pairedStat(GSE6631, pairing=c(-1, 1, -2, 2))

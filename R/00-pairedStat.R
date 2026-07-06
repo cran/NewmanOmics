@@ -88,8 +88,11 @@ setMethod("hist", signature = "NewmanPaired",
   }
 })
 
-pairedStat <- function(baseData, perturbedData = NULL, pairing = NULL){
-
+pairedStat <- function(baseData, perturbedData = NULL, pairing = NULL,
+                       ptype = c("empirical", "theoretical"),
+                       ntype = c("one-sided", "two-sided")){
+  ptype <- match.arg(ptype)
+  ntype <- match.arg(ntype)
   if (is.list(baseData)) {
     x <- baseData
     baseData <- do.call(cbind, lapply(x, function(entry) {entry[,1]}))
@@ -130,16 +133,30 @@ pairedStat <- function(baseData, perturbedData = NULL, pairing = NULL){
   colnames(smoothSD) <- colnames(pairedMean)
   
   ## compute the matrix of nu-statistics
-  ## KRC: Why is there an absolute value?
-  matNu <- abs(baseData - perturbedData) / smoothSD
+  ## always compute the signed (two-sided) version as default
+  matNu <- (baseData - perturbedData) / smoothSD
   colnames(matNu) <- colnames(pairedMean)
 
   ## empirical p-values via simulation
-  m <- mean(matNu)
-  sd <- sd(matNu)
-  randNu <- randNuGen(m, sd)
-  pValsPaired <- nu2PValPaired(matNu, as.vector(randNu))
-  colnames(pValsPaired) <- colnames(pairedMean)
+  emp <- function(M, ntype) {
+     m <- mean(M)
+     sd <- sd(abs(M))
+     randNu <- randNuGen(m, sd)
+     pvp <- nu2PValPaired(M, as.vector(randNu))
+     colnames(pvp) <- colnames(pairedMean)
+     1 - pvp
+  }
+  theo <- function(M, ntype) {
+    pnorm(M, 0, sqrt(pi))
+  }
+  pValsPaired <- switch(ptype,
+                        empirical = emp(matNu),
+                        theoretical = theo(matNu)
+                        )
+  if (ntype == "one-sided") {
+    matNu <- abs(matNu)
+    pValsPaired <- 1 - abs(1 - 2*pValsPaired)
+  }
 
   new("NewmanPaired",
       nu.statistics = matNu,
@@ -157,7 +174,7 @@ randNuGen <- function(mu=0, sigma=1) {
   A <- matrix(rnorm(10000*100, mu, sigma), ncol=100)
   B <- matrix(rnorm(10000*100, mu, sigma), ncol=100)
   sdest <- mean( abs(A-B)/sqrt(2) )
-  abs(A-B)/sdest
+  (A-B)/sdest
 }
 
 ### originally written by Chao Liu on stackoverflow at
