@@ -42,7 +42,7 @@ An object of the \code{\link{NewmanPaired}} class.
   the smoothed SD.
 
   Note that this assumption is most useful on the log-transformed
-  scale  (\url{https://pubmed.ncbi.nlm.nih.gov/25092958/}).
+  scale  (\url{https://pmc.ncbi.nlm.nih.gov/articles/PMC4120293/}).
   If your data is on a raw scale, then we recommend transforming
   it before computing the Newman paired statistic.
 
