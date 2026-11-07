@@ -23,7 +23,7 @@ ps2 <- pairedStat(list(lung))
 summary(ps2@nu.statistics)
 summary(ps2@p.values)
 
-summary(ps@nu.statistics - ps2@nu.statistics)
+summary(round(ps@nu.statistics - ps2@nu.statistics), 10)
 summary(pdiff <- ps@p.values - ps2@p.values)
 
 plot(ps@nu.statistics, pdiff)

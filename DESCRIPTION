@@ -3,8 +3,8 @@ Type: Package
 LazyData: true
 Title: Extending the Newman Studentized Range Statistic to
         Transcriptomics
-Version: 1.1.4
-Date: 2026-09-24
+Version: 1.1.5
+Date: 2026-11-07
 Authors@R: c(person(given = "Zachary B.", family = "Abrams", role = "aut"),
                person(given = "Greg", family = "Gershkowitz", role = "aut"),
                person(given = "Anoushka", family = "Joglekar", role = "aut"),
@@ -21,7 +21,7 @@ VignetteBuilder: knitr
 Suggests: knitr, rmarkdown
 URL: http://silicovore.com/OOMPA/standalone.html
 NeedsCompilation: no
-Packaged: 2026-09-24 20:58:11 UTC; KRC
+Packaged: 2026-11-07 14:39:22 UTC; KRC
 Author: Zachary B. Abrams [aut],
   Greg Gershkowitz [aut],
   Anoushka Joglekar [aut],
@@ -29,4 +29,4 @@ Author: Zachary B. Abrams [aut],
   Kevin R. Coombes [aut, cre]
 Maintainer: Kevin R. Coombes <krc@silicovore.com>
 Repository: CRAN
-Date/Publication: 2026-09-24 21:50:11 UTC
+Date/Publication: 2026-11-07 16:50:35 UTC
